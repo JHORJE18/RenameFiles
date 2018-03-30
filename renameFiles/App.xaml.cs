@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Push;
+using Microsoft.AppCenter.Analytics;
 
 namespace renameFiles
 {
@@ -30,6 +33,10 @@ namespace renameFiles
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            // App Center
+            AppCenter.Start("789c1d23-3380-4384-b809-3b466ab710a9", typeof(Analytics));
+            AppCenter.Start("789c1d23-3380-4384-b809-3b466ab710a9", typeof(Push));
         }
 
         /// <summary>

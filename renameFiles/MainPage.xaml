@@ -7,7 +7,140 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="gridBase" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60px"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40px"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--Borders-->
+        <Border Grid.Column="0" Background="#4CAF50" Grid.Row="0" Margin="0" BorderBrush="Black" BorderThickness="0"/>
+        <Border Grid.Column="1" Background="#4CAF50" Grid.Row="0" Margin="0" BorderBrush="Black" BorderThickness="0"/>
+        <Border Grid.Column="2" Background="#4CAF50" Grid.Row="0" Margin="0" BorderBrush="Black" BorderThickness="0"/>
+        <Border Grid.Column="0" Background="#1B5E20" Grid.Row="1" Margin="0" BorderBrush="Black" BorderThickness="0"/>
+        <Border Grid.Column="1" Grid.Row="1" Margin="-1" BorderBrush="Black" BorderThickness="0"/>
+        <Border Grid.Column="2" Grid.Row="1" Margin="0" BorderBrush="Black" BorderThickness="0"/>
+
+        <!--COLUMNA IZQUIERDA-->
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
+            <Button x:Name="btnMenuAjustes" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" >
+                <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_settings_white_48dp_2x.png" />
+            </Button>
+            <Button x:Name="btnMenuInfo" VerticalAlignment="Bottom" Margin="5,5,5,5" Click="btnMenuInfo_Click" Background="#00000000" >
+                <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_info_outline_white_24dp_2x.png" />
+            </Button>
+            <Line Stroke="White" StrokeThickness="5" X1="500" Stretch="Fill"/>
+            <Button x:Name="btnMenuExit" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" Click="btnMenuExit_Click" >
+                <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_exit_to_app_white_48dp_2x.png"  />
+            </Button>
+        </StackPanel>
+
+        <!--PANEL CENTRAL-->
+        <Border Grid.Column="1" Grid.Row="1" Margin="0" BorderBrush="Gray" BorderThickness="0,0,1,0"/>
+        <Grid Grid.Column="1" Grid.Row="1" Margin="5">
+            <Image Width="50px" VerticalAlignment="Top" Margin="5" HorizontalAlignment="Left" Source="Assets/material icons/ic_attach_file_black_48dp_2x.png" />
+            <TextBlock x:Name="textArchivos" HorizontalAlignment="Stretch" Height="55" Text="Archivos" VerticalAlignment="Top" Margin="55,5,5,5" FontSize="35"/>
+            <ListView x:Name="listArchivos" Margin="0,60,0,60" Foreground="#000000" Background="#EEEEEE" SelectionChanged="listArchivos_SelectionChanged" IsMultiSelectCheckBoxEnabled="False" SelectionMode="Extended" FontFamily="Segoe UI"/>
+            <Grid VerticalAlignment="Bottom" Height="50" Margin="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnAddFiles" Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="btnAddFiles_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Assets/material icons/ic_add_circle_outline_black_48dp_2x.png" Height="25px" Margin="0,0,10,0"/>
+                        <TextBlock Text="Añadir" FontSize="25px" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="btnRemoveFiles" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="btnRemoveFiles_Click" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Assets/material icons/ic_remove_circle_outline_black_48dp_2x.png" Height="25px" Margin="0,0,10,0" />
+                        <TextBlock Text="Eliminar" FontSize="25px" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <!--Panel Derecho-->
+        <Grid Grid.Row="1" Grid.Column="2" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="1" Margin="-5" BorderBrush="Gray" BorderThickness="0,1,0,0"/>
+
+            <Image Grid.Row="0" Width="50px" VerticalAlignment="Top" Margin="5" HorizontalAlignment="Left" Source="Assets/material icons/ic_mode_edit_black_48dp_2x.png" />
+            <TextBlock Grid.Row="0" HorizontalAlignment="Stretch" Height="55" Text="Parámetros" VerticalAlignment="Top" Margin="60,5,5,5" FontSize="35" FontFamily="Segoe UI"/>
+            <Pivot x:Name="rootPivot" Margin="0,60,0,10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Segoe UI" Background="#E0E0E0">
+                <PivotItem Header="Resumen" Foreground="Green" FontFamily="Segoe UI" Background="#EEEEEE" Margin="5">
+                    <!--Pivot content goes here-->
+                    <ScrollViewer>
+                        <StackPanel>
+                            <ToggleSwitch x:Name="switchResumenRemplazar" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Remplazar texto" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
+                            <ToggleSwitch x:Name="switchResumenAñadir" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Añadir texto" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
+                            <ToggleSwitch x:Name="switchResumenEliminar" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Eliminar caracteres" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
+                            <ToggleSwitch x:Name="switchResumenMayusculas" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Cambiar Mayusculas y minusculas" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem Header="Remplazar texto" FontFamily="Segoe UI" Background="#EEEEEE" Margin="5">
+                    <!--Pivot content goes here-->
+                    <ScrollViewer>
+                        <StackPanel VerticalAlignment="Stretch">
+                            <ToggleSwitch x:Name="switchRemplazar" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Remplazar texto" IsOn="False" Toggled="controladorSwitchs"/>
+                            <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
+                            <TextBox x:Name="textBoxRemplazarTextoOrigen" Margin="10,5" Header="Remplazar texto" InputScope="Text" IsSpellCheckEnabled="False" PlaceholderText="Texto el cual quieres cambiar" />
+                            <RadioButton Margin="5,5,5,0" x:Name="rbRemplazarVacio" Content="Remplazar por caracter vacio" IsChecked="False" HorizontalAlignment="Stretch" Checked="controladorRadioButtons" />
+                            <RadioButton Margin="5,0,5,5" x:Name="rbRemplazarTexto" Content="Remplazar por otro texto" HorizontalAlignment="Stretch" Checked="controladorRadioButtons" IsChecked="False" />
+                            <TextBox x:Name="textBoxRemplazarOtroTexto" Margin="10,5" PlaceholderText="Texto al que se remplazara" InputScope="Text" />
+                            <ToggleSwitch Margin="5" Header="Distingir Mayusculas y minusculas" OffContent="No" OnContent="Si" x:Name="switchRemplazarMayusculas" HorizontalAlignment="Stretch" />
+                            <Button x:Name="btnAplicarRemplazar" HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem Header="Añadir texto" FontFamily="Segoe UI" Background="#EEEEEE" Margin="5">
+                    <!--Pivot content goes here-->
+                    <ScrollViewer>
+                        <StackPanel VerticalAlignment="Stretch">
+                            <ToggleSwitch x:Name="switchAñadir" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Añadir texto" IsOn="False" Toggled="controladorSwitchs"/>
+                            <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
+                            <Button HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem Header="Eliminar caracteres" Background="#EEEEEE" Margin="5">
+                    <!--Pivot content goes here-->
+                    <ScrollViewer>
+                        <StackPanel VerticalAlignment="Stretch">
+                            <ToggleSwitch x:Name="switchEliminar" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Eliminar determinados caracteres" IsOn="False" Toggled="controladorSwitchs"/>
+                            <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
+                            <TextBox Margin="5,0" Header="Caracteres" PlaceholderText="Introduce el caracter" InputScope="Text" />
+                            <Button HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem Header="Cambiar Mayusculas y minusculas" Background="#EEEEEE" Margin="5">
+                    <!--Pivot content goes here-->
+                    <ScrollViewer>
+                        <StackPanel VerticalAlignment="Stretch">
+                            <ToggleSwitch x:Name="switchMayusculas" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Cambiar formato de Mayusculas y minusculas" IsOn="False" Toggled="controladorSwitchs"/>
+                            <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
+                            <Button HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+            </Pivot>
+
+            <Image Grid.Row="1" Width="50px" VerticalAlignment="Top" Margin="5" HorizontalAlignment="Left" Source="Assets/material icons/ic_flip_to_back_black_48dp_2x.png" />
+            <TextBlock Grid.Row="1" HorizontalAlignment="Stretch" Height="55" Text="Previsualización" VerticalAlignment="Top" Margin="60,5,5,5" FontSize="35"/>
+            <ListView Grid.Row="1" x:Name="prevListArchivos" Margin="0,60,0,0" Foreground="#000000" Background="#EEEEEE" IsMultiSelectCheckBoxEnabled="False" SelectionMode="None" FontFamily="Segoe UI" IsEnabled="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" TabNavigation="Once" RequestedTheme="Default"/>
+        </Grid>
 
     </Grid>
 </Page>
