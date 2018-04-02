@@ -73,4 +73,20 @@ public class Operaciones
 
         return resultado;
     }
+
+    // Añadir Texto
+    public string AñadirTexto(string nombreOriginal, string textoAdd, bool textoFinal)
+    {
+        string resultado = "";
+
+        if (textoFinal)
+        {
+            resultado = nombreOriginal + textoAdd;
+        } else
+        {
+            resultado = textoAdd + nombreOriginal;
+        }
+
+        return resultado;
+    }
 }

@@ -29,6 +29,7 @@ namespace renameFiles
         List<StorageFile> listadoFicheros;
         List<String> listadoPrevio;
         Operaciones ops;
+        Comprobaciones check;
 
         public MainPage()
         {
@@ -36,24 +37,11 @@ namespace renameFiles
             listadoFicheros = new List<StorageFile>();
             listadoPrevio = new List<String>();
             ops = new Operaciones();
+            check = new Comprobaciones();
+
             //prevListArchivos.ItemsSource = listadoPrevio;
             rbRemplazarTexto.IsChecked = true;
-        }
-
-        // SubRutina eliminar archivo
-        private void btnRemoveFiles_Click(object sender, RoutedEventArgs e)
-        {
-            // Borra los elementos que esten seleccionados
-            Debug.WriteLine("Procediendo a borrar " + listArchivos.SelectedItems.Count + " elementos");
-            while (listArchivos.SelectedItems.Count > 0)
-            {
-                Debug.WriteLine("Archivo >> " + listArchivos.SelectedItems.First() + " << eliminado");
-                int index = listArchivos.Items.IndexOf(listArchivos.SelectedItems.First());
-
-                //Eliminamos eleemnto
-                listArchivos.Items.RemoveAt(index);
-                listadoFicheros.RemoveAt(index);
-            }
+            rbAñadirFinal.IsChecked = true;
         }
 
         // Subrutina gestiona boton eliminar disponible o no
@@ -69,13 +57,6 @@ namespace renameFiles
             {
                 btnRemoveFiles.IsEnabled = false;
             }
-        }
-
-        // Solicita añadir nuevo fichero
-        private void btnAddFiles_Click(object sender, RoutedEventArgs e)
-        {
-            // Dialogo abrir fichero
-            openFileAsync();
         }
 
         private async System.Threading.Tasks.Task openFileAsync()
@@ -115,20 +96,6 @@ namespace renameFiles
 
             return false;
         }
-
-        // # Menu Lateral Botones
-        private void btnMenuInfo_Click(object sender, RoutedEventArgs e)
-        {
-            //Abrir dialogo
-            MostrarDialogoInfo();
-        }
-
-        private void btnMenuExit_Click(object sender, RoutedEventArgs e)
-        {
-            //Abrir dialogo
-            MostrarDialogoSalirAsync();
-        }
-
 
         public async System.Threading.Tasks.Task MostrarDialogoInfo()
         {
@@ -181,9 +148,10 @@ namespace renameFiles
 
             Debug.WriteLine("Cargando RadioButtons");
 
-            // Control remplazar texto
+            // Control
             switch (refRadioButton.Name)
             {
+                // Remplazar Texto
                 case "rbRemplazarVacio":
                     rbRemplazarTexto.IsChecked = false;
                     textBoxRemplazarOtroTexto.IsEnabled = false;
@@ -192,10 +160,85 @@ namespace renameFiles
                     rbRemplazarVacio.IsChecked = false;
                     textBoxRemplazarOtroTexto.IsEnabled = true;
                     break;
+
+                // Añadir Texto
+                case "rbAñadirPrincipio":
+                    rbAñadirFinal.IsChecked = false;
+                    break;
+                case "rbAñadirFinal":
+                    rbAñadirPrincipio.IsChecked = false;
+                    break;
             }
         }
 
-        // #Controlador de Switch's
+        // # Controlador Buttons
+        public void ControladorButtons(object sender, RoutedEventArgs e)
+        {
+            Button refButtons = (Button)sender;
+            Debug.WriteLine("Vengo del botón " + refButtons.Name);
+
+            switch (refButtons.Name)
+            {
+                //Menu lateral
+                case "btnMenuInfo":
+                    MostrarDialogoInfo();
+                    break;
+                case "btnMenuExit":
+                    MostrarDialogoSalirAsync();
+                    break;
+
+                // Panel archivos
+                case "btnAddFiles":
+                    openFileAsync();
+                    break;
+                case "btnRemoveFiles":
+                    BorrarFiles();
+                    break;
+
+                // Panel Resumen
+                case "btnVistaPrevia":
+                    RefrescarVistaPrevia();
+                    break;
+                case "btnAplicar":
+                    // TODO: Iniciar conversión
+                    break;
+
+                // Panel Remplazar texto
+                case "btnAplicarRemplazar":
+                    switchRemplazar.IsOn = true;
+                    RefrescarVistaPrevia();
+                    break;
+
+                // Panel Añadir texto
+                case "btnAplicarAñadirTexto":
+                    switchAñadir.IsOn = true;
+                    RefrescarVistaPrevia();
+                    break;
+
+
+                default:
+                    Debug.WriteLine("No entiendo de que botón he venido");
+                    break;
+            }
+        }
+
+        // Elimina ficheros seleccionados de la lista
+        private void BorrarFiles()
+        {
+            // Borra los elementos que esten seleccionados
+            Debug.WriteLine("Procediendo a borrar " + listArchivos.SelectedItems.Count + " elementos");
+            while (listArchivos.SelectedItems.Count > 0)
+            {
+                Debug.WriteLine("Archivo >> " + listArchivos.SelectedItems.First() + " << eliminado");
+                int index = listArchivos.Items.IndexOf(listArchivos.SelectedItems.First());
+
+                //Eliminamos eleemnto
+                listArchivos.Items.RemoveAt(index);
+                listadoFicheros.RemoveAt(index);
+            }
+        }
+
+        // # Controlador de Switch's
         public void controladorSwitchs(object sender, RoutedEventArgs e)
         {
             ToggleSwitch refToogle = (ToggleSwitch)sender;
@@ -229,66 +272,109 @@ namespace renameFiles
                     Debug.WriteLine("Switch desconocido");
                     break;
             }
-
-            refrescarVistaPrevia();
         }
 
         // Proceso para refrescar vista previa
-        public void refrescarVistaPrevia()
+        public void RefrescarVistaPrevia()
         {
+            // Eliminamos listado previo
             listadoPrevio.Clear();
             prevListArchivos.Items.Clear();
+
+            // Añadimos todos los elementos
+            for (int i=0; i<listadoFicheros.Count; i++)
+            {
+                listadoPrevio.Add(listadoFicheros[i].DisplayName);
+            }
 
             // Control que acciones se han activado realizar
             if (switchResumenRemplazar.IsOn)
             {
-                Analytics.TrackEvent("Remplazar texto");
+                bool valido = check.CheckRemplazarTexto(rbRemplazarVacio, rbRemplazarTexto, textBoxRemplazarTextoOrigen, textBoxRemplazarOtroTexto);
 
-                // Preparativos
-                string caracterCambiar = textBoxRemplazarTextoOrigen.Text;
-                string caracterNuevo = "";
-                bool isDiferenciaMayusculas = switchRemplazarMayusculas.IsOn;
+                if (valido) {
+                    Analytics.TrackEvent("Remplazar texto");
 
-                if ((bool)rbRemplazarTexto.IsChecked)
-                {
-                    caracterNuevo = textBoxRemplazarOtroTexto.Text;
-                }
-                else if ((bool)rbRemplazarVacio.IsChecked)
-                {
-                    caracterNuevo = "";
-                }
-                else
-                {
-                    // TODO: ERROR NINGUNO SELECCIONADO
-                }
+                    // Preparativos
+                    string caracterCambiar = textBoxRemplazarTextoOrigen.Text;
+                    string caracterNuevo = "";
+                    bool isDiferenciaMayusculas = switchRemplazarMayusculas.IsOn;
 
-                // Recorremos todos los archivos
-                for (int i=0; i < listadoFicheros.Count; i++)
-                {
-                    Debug.WriteLine("-------------------------------------------------------");
-                    Debug.WriteLine("Voy a proceder a remplazar texto de ==> " + listadoFicheros[i].DisplayName);
-
-                    if (ops.CheckCoincidenciaTexto(listadoFicheros[i].DisplayName, caracterCambiar, isDiferenciaMayusculas))
+                    //Comprobar mdoo de remplazar
+                    if ((bool)rbRemplazarTexto.IsChecked)
                     {
-                        // Procedemos a remplazar texto
-                        string resultado = ops.RemplazarTexto(listadoFicheros[i].DisplayName, caracterCambiar, caracterNuevo, isDiferenciaMayusculas);
-                        Debug.WriteLine("Se ha cambiado a ==> " + resultado);
-                        listadoPrevio.Add(resultado);
+                        caracterNuevo = textBoxRemplazarOtroTexto.Text;
+                    }
+                    else if ((bool)rbRemplazarVacio.IsChecked)
+                    {
+                        caracterNuevo = "";
                     }
                     else
                     {
-                        // Pasamos al siguiente
-                        listadoPrevio.Add(listadoFicheros[i].DisplayName);
-                        Debug.WriteLine("Ignorado :D");
+                        // TODO: ERROR NINGUNO SELECCIONADO
                     }
 
-                    Debug.WriteLine("-------------------------------------------------------");
+                    // Recorremos todos los archivos
+                    for (int i = 0; i < listadoPrevio.Count; i++)
+                    {
+                        Debug.WriteLine("-------------------------------------------------------");
+                        Debug.WriteLine("Voy a proceder a remplazar texto de ==> " + listadoPrevio[i]);
+
+                        if (ops.CheckCoincidenciaTexto(listadoPrevio[i], caracterCambiar, isDiferenciaMayusculas))
+                        {
+                            // Procedemos a remplazar texto
+                            string resultado = ops.RemplazarTexto(listadoPrevio[i], caracterCambiar, caracterNuevo, isDiferenciaMayusculas);
+                            Debug.WriteLine("Se ha cambiado a ==> " + resultado);
+                            listadoPrevio[i] = resultado;
+                        }
+                        else
+                        {
+                            // Pasamos al siguiente
+                            listadoPrevio[i] = listadoPrevio[i];
+                            Debug.WriteLine("Ignorado :D");
+                        }
+
+                        Debug.WriteLine("-------------------------------------------------------");
+                    }
+                }
+                else
+                {
+                    // No valido
+                    switchResumenRemplazar.IsOn = false;
+                    Debug.WriteLine("Algo no esta correcto, por lo que no hago nada :D");
                 }
             }
 
             if (switchResumenAñadir.IsOn)
             {
-                Analytics.TrackEvent("Añadir texto");
+                bool valido = check.CheckAñadirTexto(rbAñadirPrincipio, rbAñadirFinal, textBoxAñadirTexto);
+
+                if (valido)
+                {
+                    Analytics.TrackEvent("Añadir texto");
+
+                    bool textoFinal = (bool)rbAñadirFinal.IsChecked;
+                    
+                    // Procedemos a realizar acción en todos los ficheros
+                    for (int i = 0; i<listadoPrevio.Count; i++)
+                    {
+                        Debug.WriteLine("-------------------------------------------------------");
+                        Debug.WriteLine("Voy a proceder a añadir el texto al archivo ==> " + listadoFicheros[i].DisplayName);
+
+                        string resultado = ops.AñadirTexto(listadoPrevio[i], textBoxAñadirTexto.Text, textoFinal);
+                        Debug.WriteLine("Se ha cambiado a ==> " + resultado);
+                        listadoPrevio[i] = resultado;
+
+                        Debug.WriteLine("-------------------------------------------------------");
+
+                    }
+                }
+                else
+                {
+                    // No valido
+                    switchResumenAñadir.IsOn = false;
+                    Debug.WriteLine("Algo no esta correcto en Añadir Texto, asi que mejor no hago nada :D");
+                }
 
             }
 

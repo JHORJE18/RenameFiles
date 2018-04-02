@@ -28,14 +28,14 @@
 
         <!--COLUMNA IZQUIERDA-->
         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom">
-            <Button x:Name="btnMenuAjustes" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" >
+            <Button x:Name="btnMenuAjustes" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" Click="ControladorButtons" >
                 <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_settings_white_48dp_2x.png" />
             </Button>
-            <Button x:Name="btnMenuInfo" VerticalAlignment="Bottom" Margin="5,5,5,5" Click="btnMenuInfo_Click" Background="#00000000" >
+            <Button x:Name="btnMenuInfo" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" Click="ControladorButtons" >
                 <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_info_outline_white_24dp_2x.png" />
             </Button>
             <Line Stroke="White" StrokeThickness="5" X1="500" Stretch="Fill"/>
-            <Button x:Name="btnMenuExit" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" Click="btnMenuExit_Click" >
+            <Button x:Name="btnMenuExit" VerticalAlignment="Bottom" Margin="5,5,5,5" Background="#00000000" Click="ControladorButtons" >
                 <Image Height="50px" Margin="-5" VerticalAlignment="Stretch" HorizontalAlignment="Center" Source="Assets/material icons/ic_exit_to_app_white_48dp_2x.png"  />
             </Button>
         </StackPanel>
@@ -52,13 +52,13 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="btnAddFiles" Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="btnAddFiles_Click">
+                <Button x:Name="btnAddFiles" Grid.Column="0" Margin="0,0,5,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ControladorButtons">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Assets/material icons/ic_add_circle_outline_black_48dp_2x.png" Height="25px" Margin="0,0,10,0"/>
                         <TextBlock Text="Añadir" FontSize="25px" />
                     </StackPanel>
                 </Button>
-                <Button x:Name="btnRemoveFiles" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="btnRemoveFiles_Click" IsEnabled="False">
+                <Button x:Name="btnRemoveFiles" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ControladorButtons" IsEnabled="False">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Assets/material icons/ic_remove_circle_outline_black_48dp_2x.png" Height="25px" Margin="0,0,10,0" />
                         <TextBlock Text="Eliminar" FontSize="25px" />
@@ -86,6 +86,15 @@
                             <ToggleSwitch x:Name="switchResumenAñadir" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Añadir texto" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
                             <ToggleSwitch x:Name="switchResumenEliminar" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Eliminar caracteres" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
                             <ToggleSwitch x:Name="switchResumenMayusculas" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Cambiar Mayusculas y minusculas" IsOn="False" FontFamily="Segoe UI" Toggled="controladorSwitchs"/>
+                            <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
+                            <Grid Margin="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="btnVistaPrevia" Grid.Column="0" Click="ControladorButtons" HorizontalAlignment="Stretch" Content="Vista previa" Margin="5" />
+                                <Button x:Name="btnAplicar" Grid.Column="1" Click="ControladorButtons" HorizontalAlignment="Stretch" Content="Aplicar" Margin="5" />
+                            </Grid>
                         </StackPanel>
                     </ScrollViewer>
                 </PivotItem>
@@ -100,7 +109,7 @@
                             <RadioButton Margin="5,0,5,5" x:Name="rbRemplazarTexto" Content="Remplazar por otro texto" HorizontalAlignment="Stretch" Checked="controladorRadioButtons" IsChecked="False" />
                             <TextBox x:Name="textBoxRemplazarOtroTexto" Margin="10,5" PlaceholderText="Texto al que se remplazara" InputScope="Text" />
                             <ToggleSwitch Margin="5" Header="Distingir Mayusculas y minusculas" OffContent="No" OnContent="Si" x:Name="switchRemplazarMayusculas" HorizontalAlignment="Stretch" />
-                            <Button x:Name="btnAplicarRemplazar" HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                            <Button x:Name="btnAplicarRemplazar" Click="ControladorButtons" HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
                         </StackPanel>
                     </ScrollViewer>
                 </PivotItem>
@@ -110,7 +119,10 @@
                         <StackPanel VerticalAlignment="Stretch">
                             <ToggleSwitch x:Name="switchAñadir" OffContent="Desactivado" OnContent="Activado" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Header="Añadir texto" IsOn="False" Toggled="controladorSwitchs"/>
                             <Line Stroke="#FFB4B4B4" StrokeThickness="5" X1="500" Stretch="Fill" Margin="50,10"/>
-                            <Button HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
+                            <RadioButton Margin="10,5,10,0" x:Name="rbAñadirPrincipio" Content="Añadir texto al principio" IsChecked="False" HorizontalAlignment="Stretch" Checked="controladorRadioButtons" />
+                            <RadioButton Margin="10,0,10,5" x:Name="rbAñadirFinal" Content="Añadir texto al final" HorizontalAlignment="Stretch" Checked="controladorRadioButtons" IsChecked="False" />
+                            <TextBox x:Name="textBoxAñadirTexto" Margin="10,5" PlaceholderText="Texto que se añadira" InputScope="Text" />
+                            <Button x:Name="btnAplicarAñadirTexto" Click="ControladorButtons" HorizontalAlignment="Stretch" Content="Aplicar" Margin="10,10" />
                         </StackPanel>
                     </ScrollViewer>
                 </PivotItem>
